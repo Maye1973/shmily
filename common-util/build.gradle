@@ -1,0 +1,21 @@
+dependencies {
+
+    // apache
+    compile("org.apache.commons:commons-lang3:${CommonsLang3Version}")
+    compile("commons-io:commons-io:${CommonsIOVersion}")
+    compile("org.apache.commons:commons-text:${CommonsTextVersion}")
+    compile("commons-codec:commons-codec:${CommonsCodecVersion}")
+
+    // json
+    compile("com.alibaba:fastjson:${FastjsonVersion}")
+    // lombok
+    compileOnly("org.projectlombok:lombok:${LombokVersion}")
+    annotationProcessor("org.projectlombok:lombok:${LombokVersion}")
+
+    // tool
+    compile("org.hibernate:hibernate-validator:6.0.5.Final"){force = true}
+    compile("javax.validation:validation-api:2.0.0.Final"){force = true}
+
+
+
+}

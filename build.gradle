@@ -1,0 +1,38 @@
+subprojects {
+	group = 'com.shmily'
+	version = '0.0.1-SNAPSHOT'
+
+//	sourceCompatibility = JavaVersion.VERSION_1_8.toString()
+//	targetCompatibility = JavaVersion.VERSION_1_8.toString()
+
+	buildscript {
+		repositories {
+			mavenLocal()
+			maven { url 'https://mirrors.huaweicloud.com/repository/maven/' }
+			maven { url 'http://maven.aliyun.com/nexus/content/groups/public/' }
+			maven { url "https://repo.spring.io/libs-milestone" }
+			mavenCentral()
+		}
+	}
+
+	repositories {
+		mavenLocal()
+		maven { url 'https://mirrors.huaweicloud.com/repository/maven/' }
+		maven { url 'http://maven.aliyun.com/nexus/content/groups/public/' }
+		maven { url "https://repo.spring.io/libs-milestone" }
+		mavenCentral()
+	}
+
+	apply plugin: 'java'
+	apply plugin: 'eclipse'
+	apply plugin: 'idea'
+
+
+	configurations.all {
+		resolutionStrategy.cacheChangingModulesFor 0, 'seconds'
+	}
+}
+
+configurations.all {
+	resolutionStrategy.cacheChangingModulesFor 0, 'seconds'
+}
