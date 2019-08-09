@@ -168,7 +168,7 @@ public class OrgCodeUtils {
 
     // 私有构造方法 不让构造该对象
     private OrgCodeUtils(){
-        throw new BaseBizException("not allow instance OrgCodeUtils");
+        throw new BaseBizException(String.join("", "not allow instance ", this.getClass().getName()));
     }
 
 

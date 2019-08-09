@@ -67,7 +67,7 @@ public class IdCardUtils {
 
     // 私有构造方法 不让构造该对象
     private IdCardUtils(){
-        throw new BaseBizException("not allow instance IdCardUtils");
+        throw new BaseBizException(String.join("", "not allow instance ", this.getClass().getName()));
     }
 
 

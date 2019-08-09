@@ -6,6 +6,11 @@ dependencies {
     compile("org.apache.commons:commons-text:${CommonsTextVersion}")
     compile("commons-codec:commons-codec:${CommonsCodecVersion}")
 
+    // guava
+    compile("com.google.guava:guava:${GuavaVersion}")
+
+
+
     // json
     compile("com.alibaba:fastjson:${FastjsonVersion}")
     // lombok
@@ -13,8 +18,14 @@ dependencies {
     annotationProcessor("org.projectlombok:lombok:${LombokVersion}")
 
     // tool
-    compile("org.hibernate:hibernate-validator:6.0.5.Final"){force = true}
-    compile("javax.validation:validation-api:2.0.0.Final"){force = true}
+    compile("org.hibernate:hibernate-validator:${HibernateValidatorVersion}")
+    compile("javax.validation:validation-api:${ValidationApiVersion}")
+
+    // log
+    compile("ch.qos.logback:logback-access:${LogbackVersion}")
+    compile("ch.qos.logback:logback-core:${LogbackVersion}")
+    compile("ch.qos.logback:logback-access:${LogbackVersion}")
+
 
 
 
