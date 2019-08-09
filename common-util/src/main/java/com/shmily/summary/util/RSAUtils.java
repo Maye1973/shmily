@@ -27,6 +27,8 @@ public class RSAUtils {
 
 
     private static final String RSA = "RSA";
+    private static final int RSA_ENCRYPT_MAX_LENGTH = 117;
+    private static final int RSA_DECODE_MAX_LENGTH = 128;
     private static final Map<String, String> KEY_MAP = new ConcurrentHashMap<>();
 
 
@@ -53,7 +55,7 @@ public class RSAUtils {
         String publicKeyStr = getKey(publicKeyPath);
         PublicKey publicKey = transferPublicKeyFromString(publicKeyStr);
         return Base64.encodeBase64String(doEncodeDecode(Cipher.ENCRYPT_MODE,
-                publicKey, plainTextByte));
+                publicKey, plainTextByte, RSA_ENCRYPT_MAX_LENGTH));
     }
 
     /**
@@ -73,7 +75,7 @@ public class RSAUtils {
 
         String privateKeyStr = getKey(privateKeyPath);
         PrivateKey privateKey = transferPrivateKeyFromString(privateKeyStr);
-        byte[] bytesAfterDecode = doEncodeDecode(Cipher.DECRYPT_MODE, privateKey, bytes);
+        byte[] bytesAfterDecode = doEncodeDecode(Cipher.DECRYPT_MODE, privateKey, bytes, RSA_DECODE_MAX_LENGTH);
         try {
             return new String(bytesAfterDecode, CharsetEnum.UTF8.getValue());
         } catch (UnsupportedEncodingException e) {
@@ -81,11 +83,15 @@ public class RSAUtils {
         }
     }
 
-    private static byte[] doEncodeDecode(int cipherMode, Key key, byte[] txt){
+    private static byte[] doEncodeDecode(int cipherMode, Key key, byte[] txt, int maxBlock){
+
 
         try {
             Cipher cipher = Cipher.getInstance(RSA);
             cipher.init(cipherMode, key);
+            if (txt.length > maxBlock) {
+                return doEncodeDecodeBySegment(txt, maxBlock, cipher);
+            }
             return cipher.doFinal(txt);
         } catch (NoSuchAlgorithmException e) {
             throw new BaseBizException(String.join("", "no such algorithm[", RSA, "]"), e);
@@ -101,6 +107,32 @@ public class RSAUtils {
 
         } catch (IllegalBlockSizeException e) {
             throw new BaseBizException(String.join("", "invalid block size"), e);
+        }
+    }
+
+    // RSA 分段加解密
+    private static byte[] doEncodeDecodeBySegment(byte[] txt, int maxBlock, Cipher cipher)
+            throws BadPaddingException, IllegalBlockSizeException {
+
+        int txtLength = txt.length;
+        int offset = 0;
+        int loopTime = 0;
+        byte[] tempCache;
+        try (ByteArrayOutputStream out = new ByteArrayOutputStream(txtLength)){
+            while (txtLength - offset > 0) {
+                if (txtLength - offset > maxBlock) {
+                    tempCache = cipher.doFinal(txt, offset, maxBlock);
+                } else {
+                    tempCache = cipher.doFinal(txt, offset, txtLength - offset);
+                }
+                out.write(tempCache, 0, tempCache.length);
+                loopTime++;
+                offset = loopTime * maxBlock;
+            }
+
+            return out.toByteArray();
+        } catch (IOException e) {
+            throw new BaseBizException(e.getMessage(), e);
         }
     }
 

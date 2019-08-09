@@ -18,7 +18,7 @@ public class RSAUtilsTest {
             String.join(FILE_SEPARATOR, USER_HOME_PATH, "privateKey.keystore");;
 
     public static void main(String[] args) {
-        final String plainTxt = "kevin.ma-test-rsa";
+        final String plainTxt = "kevin.ma-test-rsa234567890-09876543234567890-098765432345678909876543234567898765432345678987654323456789876543345678987654324567898765434567899876543456789987654345678909876543345678976534567897654567877777";
         KeyPairGeneratorUtils.keyPairGenerator(PUBLIC_KEY_PATH, PRIVATE_KEY_PATH, "RSA");
 
         System.out.println(String.join("","before rsa encode text=", plainTxt));
