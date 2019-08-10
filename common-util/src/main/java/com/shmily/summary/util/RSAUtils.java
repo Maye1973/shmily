@@ -6,6 +6,7 @@ import com.shmily.summary.exception.BaseBizException;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
+
 import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
 import javax.crypto.IllegalBlockSizeException;
@@ -17,6 +18,7 @@ import java.security.spec.PKCS8EncodedKeySpec;
 import java.security.spec.X509EncodedKeySpec;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -40,8 +42,24 @@ public class RSAUtils {
      */
     public static String encryptByPublicKey(String plainText, String publicKeyPath){
 
+        return encryptByPublicKey(plainText, publicKeyPath, CharsetEnum.UTF8);
+    }
+
+    /**
+     * 通过公钥加密
+     * @param plainText
+     * @param publicKeyPath
+     * @param charsetEnum 为空默认 utf-8
+     * @return
+     */
+    public static String encryptByPublicKey(String plainText, String publicKeyPath, CharsetEnum charsetEnum){
+
         Preconditions.checkArgument(StringUtils.isNotEmpty(publicKeyPath),
                 "参数[publicKeyPath]不可为空");
+
+        if (Objects.isNull(charsetEnum)) {
+            charsetEnum = CharsetEnum.UTF8;
+        }
         if (StringUtils.isEmpty(plainText)) {
             return plainText;
         }
@@ -50,13 +68,56 @@ public class RSAUtils {
         try {
             plainTextByte = plainText.getBytes(CharsetEnum.UTF8.getValue());
         } catch (UnsupportedEncodingException e) {
-            throw new BaseBizException(String.join("", "unSupport encoding[", CharsetEnum.UTF8.getValue(), "]"), e);
+            throw new BaseBizException(String.join("", "unSupport encoding[", charsetEnum.getValue(), "]"), e);
         }
         String publicKeyStr = getKey(publicKeyPath);
         PublicKey publicKey = transferPublicKeyFromString(publicKeyStr);
         return Base64.encodeBase64String(doEncodeDecode(Cipher.ENCRYPT_MODE,
                 publicKey, plainTextByte, RSA_ENCRYPT_MAX_LENGTH));
     }
+
+
+    /**
+     * 通过公钥加密
+     * @param plainText 代价密的明文
+     * @param publicKeyStr 公钥字符串
+     * @return
+     */
+    public static String encryptByPublicKeyStr(String plainText, String publicKeyStr){
+        return encryptByPublicKeyStr(plainText, publicKeyStr, CharsetEnum.UTF8);
+    }
+
+    /**
+     * 通过公钥加密
+     * @param plainText 代价密的明文
+     * @param publicKeyStr 公钥字符串
+     * @param charsetEnum 为空默认 utf-8
+     * @return
+     */
+    public static String encryptByPublicKeyStr(String plainText, String publicKeyStr, CharsetEnum charsetEnum){
+
+        Preconditions.checkArgument(StringUtils.isNotEmpty(publicKeyStr),
+                "参数[publicKeyStr]不可为空");
+
+        if (Objects.isNull(charsetEnum)) {
+            charsetEnum = CharsetEnum.UTF8;
+        }
+        if (StringUtils.isEmpty(plainText)) {
+            return plainText;
+        }
+
+        final byte[] plainTextByte;
+        try {
+            plainTextByte = plainText.getBytes(CharsetEnum.UTF8.getValue());
+        } catch (UnsupportedEncodingException e) {
+            throw new BaseBizException(String.join("", "unSupport encoding[", charsetEnum.getValue(), "]"), e);
+        }
+        PublicKey publicKey = transferPublicKeyFromString(publicKeyStr);
+        return Base64.encodeBase64String(doEncodeDecode(Cipher.ENCRYPT_MODE,
+                publicKey, plainTextByte, RSA_ENCRYPT_MAX_LENGTH));
+    }
+
+
 
     /**
      * 通过私钥解密
@@ -65,11 +126,24 @@ public class RSAUtils {
      * @return
      */
     public static String decryptByPrivateKey(String cipherText, String privateKeyPath) {
+        return decryptByPrivateKey(cipherText, privateKeyPath, CharsetEnum.UTF8);
+    }
+
+    /**
+     * 通过私钥解密
+     * @param cipherText
+     * @param privateKeyPath
+     * @return
+     */
+    public static String decryptByPrivateKey(String cipherText, String privateKeyPath, CharsetEnum charsetEnum) {
 
         Preconditions.checkArgument(StringUtils.isNotEmpty(privateKeyPath),
                 "参数[privateKeyPath]不可为空");
         if (StringUtils.isEmpty(cipherText)) {
             return cipherText;
+        }
+        if (Objects.isNull(charsetEnum)) {
+            charsetEnum = CharsetEnum.UTF8;
         }
         byte[] bytes = Base64.decodeBase64(cipherText);
 
@@ -79,7 +153,7 @@ public class RSAUtils {
         try {
             return new String(bytesAfterDecode, CharsetEnum.UTF8.getValue());
         } catch (UnsupportedEncodingException e) {
-            throw new BaseBizException(String.join("", "unSupport encoding[", CharsetEnum.UTF8.getValue(), "]"), e);
+            throw new BaseBizException(String.join("", "unSupport encoding[", charsetEnum.getValue(), "]"), e);
         }
     }
 
