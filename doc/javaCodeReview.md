@@ -44,4 +44,61 @@ export CLASSPATH
 - 否则，如果其中一个操作数是long类型，另一个操作数就会转换为long类型。
 - 否则，两个操作数都转换为int类型。
 
-![avatar](../img/8种基本类型转换.png)
+![image](https://raw.githubusercontent.com/Maye1973/shmily/develop/doc/img/8%E7%A7%8D%E5%9F%BA%E6%9C%AC%E7%B1%BB%E5%9E%8B%E8%BD%AC%E6%8D%A2.png)
+
+### Arrays类
+
+* 打印数组 Arrays.toString(T[] array)
+* 打印二维数组 Arrays.deepToString(T[][] array)
+* 数组拷贝 Arrays.copyOf(T[] array, int start, int end)
+* 数组排序 Arrays.sort(T[] array) 优化的快排算法
+* 数组二分查找 Arrays.binarySearch(T[] array, int start, int end, T targe)
+
+### 对象与类
+
+#### 对象之间的关系
+* 依赖: uses-a
+* 聚合: has-a
+* 继承: is-a
+
+* 如果要返回一个可变对象的引用，首先要多它进行克隆。
+
+* 值调用：方法接收的是调用者提供的值。
+* 引用调用：方法接收的是调用者提供的变量地址。  
+> java 程序设计语言总是采用值调用。
+
+* 调用构造器的具体处理步骤  
+    1. 所有数据域被初始化为默认值(0,false,null)
+    2. 按照在类中出现的次序，依次执行所有域初始化语句和初始化块。
+    3. 如果构造器第一行调用了第二个构造器，则执行第二个构造器的主体。
+    4. 执行这个构造器的主体。
+
+* 使用类的具体处理步骤
+    1. 所有静态域被初始化为默认值(0,false,null)
+    2. 按照在类中出现的次序，依次执行所有静态域初始化语句和静态初始化块。
+
+* 对象解析和finalize方法
+    1. finalize 方法将在垃圾收集器回收对象之前被调用。不用依赖 finalize 方法来回收短缺资源，因为很难知道这个方法什么时候才会被调用。
+    2. Runtime.addShutdownHook 添加关闭钩子。
+
+#### 类设计技巧
+* 一定要将数据设计为私用的。
+* 一定要对数据进行初始化。
+* 不要在类中使用过多的基本数据类型。
+* 不是所有的域都需要域访问器和域更改器。
+* 使用标准格式进行类的定义。  
+    > 1. 公用访问特性部分  
+    > 2. 包作用域访问特性部分  
+    > 3. 私有访问特性部分  
+
+    > 实例域  
+    > 静态域  
+    > 实例方法  
+    > 静态方法  
+
+* 将职责过多的类进行分解。
+
+### 继承
+
+
+
