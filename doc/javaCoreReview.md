@@ -21,6 +21,9 @@
     * <a href="#b6">异常</a>
         * <a href="#b6.1">处理异常</a>
         * <a href="#b6.2">使用异常机制的建议</a>
+    * <a href="#b7">泛型</a>
+            * <a href="#b7.1">泛型</a>
+            * <a href="#b7.2"></a>
         
 
 ## <a name="A">环境变量设置</a>
@@ -147,10 +150,12 @@ export CLASSPATH
 * 子类数组的引用可以转换成超类数组的引用，而不需要强制类型转换。  
 
 ```java
+
 // Manager 继承自 Employee
 Manager[] managers = new Manager[10];
 Employee[] staff = managers; // ok
 staff[0] = new Employee(); // 编译器既然通过，我们把一个普通员工放到了经理行列。运行时将会报错 ArrayStoreException
+
 ```
 
 * 动态绑定-方法调用过程  
@@ -231,5 +236,25 @@ staff[0] = new Employee(); // 编译器既然通过，我们把一个普通员�
 * 应该捕获那些知道如何处理的异常，而将那些不知道怎么处理的异常传递出去。
 
 * try-catch-finally 执行顺序  
-    1. 
+    1. 执行 try 块里的代码。
+    2. 如果没有异常，则暂存 return 语句的值，然后跳转到 finally 块执行里面的代码，如果finally 语句块有 return 语句，则会覆盖 try 块的返回值。
+    3. 如果出现异常，则跳转到 catch 块，执行里面的代码，有 return 语句，则暂存 return 语句的值，然后跳转到 finally 块执行里面的代码，如果finally 语句块有 return 语句，则会覆盖 catch 块的返回值。
+    
+    > finally 块中的 return 值 会覆盖  catch 块中的 return 值；catch 块中的 return 值 会覆盖  try 块中的 return 值； 
+      
+    > 也就是 finally 块的return值优先级 > catch 块的return值优先级 > try 块的return值优先级
  
+#### <a name="b6.2">使用异常机制的建议</a>
+* 异常处理不能代替简单的测试。
+    > 异常处理开销大，仅在异常情况下才应该使用异常机制。
+* 不要过分的细化异常。
+* 利用异常层次结构。
+    > 不要只抛出RuntimeException，应该寻找更适合的子类或者自定义异常类。  
+    > 不要只捕获 Throwable 异常，否则代码更加难阅读、难维护。
+* 不要压制异常。
+* 在检查错误时，"苛刻比放任更好。
+* 不要羞于传递异常。
+
+> 断言：允许在测试期间在代码中插入一些检查语句，当代码发布时这些检测语句会被自动移走。  
+> -ea(-enableassertions) 参数代表启用断言 -da(-disableassertions) 参数表示禁用断言，默认是禁用。  
+> 断言可以根据某个类或某个包单独设置 -ea:MyClass -da:com.your 类MyClass启用断言 包 com.your 禁用断言。
