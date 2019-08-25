@@ -472,8 +472,14 @@ while(!Thread.currentThread().isInterrupted() && isMoreWorkTodo){
 * CopyOnWriteArraySet：
 > 任何集合通过使用同步包装器(synchronization wrapper)变成线程安全的。  
 > Collections.synchronizedList() Collections.synchronizedSet() Collections.synchronizedMap() Collections.synchronizedSortedSet() Collections.synchronizedSortedMap() 
-
-
+#### <a name="b9.6">Callable 和 Future</a>
+* Callable 有一个 call 方法可以返回结果。
+* Future 方法说明
+    1. V get()：调用被阻塞直到计算完成。
+    2. V get(long timeout, TimeUnit unit)：调用最多阻塞指定的时间，超过指定的时间，计算还没完成，则抛出 TimeoutException 异常。
+    3. void cancel(boolean mayInterrupt)：取消计算，如果计算还没开始则计算取消；如果计算处于运行中，那么如果参数 mayInterrupt = true，则线程被中断。
+    4. boolean isCancelled()：计算是否已经取消
+    5. boolean isDone()：计算是否已经完成。
 
 
 
