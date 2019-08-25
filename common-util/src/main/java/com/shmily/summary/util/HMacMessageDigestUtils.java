@@ -3,7 +3,7 @@ package com.shmily.summary.util;
 import com.google.common.base.Preconditions;
 import com.shmily.summary.enumz.CharsetEnum;
 import com.shmily.summary.enumz.HMacShaAlgorithmEnum;
-import com.shmily.summary.exception.BaseBizException;
+import com.shmily.summary.exception.BaseBizRuntimeException;
 
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
@@ -35,7 +35,7 @@ public class HMacMessageDigestUtils {
         try {
             mac.init(secretKeySpec);
         } catch (InvalidKeyException e) {
-            throw new BaseBizException(String.join("", "invalid key[", key, "]"), e);
+            throw new BaseBizRuntimeException(String.join("", "invalid key[", key, "]"), e);
         }
 
         byte[] bytes = mac.doFinal(getBytes(text, CharsetEnum.UTF8));
@@ -46,7 +46,7 @@ public class HMacMessageDigestUtils {
         try {
             return Mac.getInstance(algorithm);
         } catch (NoSuchAlgorithmException ex) {
-            throw new BaseBizException(String.join("", "no such algorithm[", algorithm, "]"), ex);
+            throw new BaseBizRuntimeException(String.join("", "no such algorithm[", algorithm, "]"), ex);
         }
     }
 
@@ -54,7 +54,7 @@ public class HMacMessageDigestUtils {
         try {
             return text.getBytes(charsetEnum.getValue());
         } catch (UnsupportedEncodingException e) {
-            throw new BaseBizException(String.join("", "un support charset[", charsetEnum.getValue(), "]"), e);
+            throw new BaseBizRuntimeException(String.join("", "un support charset[", charsetEnum.getValue(), "]"), e);
         }
     }
 
@@ -69,6 +69,6 @@ public class HMacMessageDigestUtils {
     }
 
     private HMacMessageDigestUtils(){
-        throw new BaseBizException(String.join("", "not allow instance ", this.getClass().getName()));
+        throw new BaseBizRuntimeException(String.join("", "not allow instance ", this.getClass().getName()));
     }
 }

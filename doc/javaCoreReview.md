@@ -22,8 +22,23 @@
         * <a href="#b6.1">处理异常</a>
         * <a href="#b6.2">使用异常机制的建议</a>
     * <a href="#b7">泛型</a>
-            * <a href="#b7.1">泛型</a>
-            * <a href="#b7.2"></a>
+        * <a href="#b7.1">泛型类</a>
+        * <a href="#b7.2">泛型方法</a>
+        * <a href="#b7.3">类型变量的限定</a>
+        * <a href="#b7.4">类型类型和虚拟机</a>
+        * <a href="#b7.5">通配符类型</a>
+    * <a href="#b8">集合</a>
+        * <a href="#b8.1">泛型类</a>
+        * <a href="#b8.2">泛型方法</a>
+        * <a href="#b8.3">类型变量的限定</a>
+        * <a href="#b8.4">类型类型和虚拟机</a>
+        * <a href="#b8.5">通配符类型</a>
+    * <a href="#b9">多线程</a>
+        * <a href="#b9.1">中断线程</a>
+        * <a href="#b9.2">线程6状态</a>
+        * <a href="#b9.3">线程属性</a>
+        * <a href="#b9.4">线程同步</a>
+        * <a href="#b9.5">阻塞队列</a>
         
 
 ## <a name="A">环境变量设置</a>
@@ -258,3 +273,211 @@ staff[0] = new Employee(); // 编译器既然通过，我们把一个普通员�
 > 断言：允许在测试期间在代码中插入一些检查语句，当代码发布时这些检测语句会被自动移走。  
 > -ea(-enableassertions) 参数代表启用断言 -da(-disableassertions) 参数表示禁用断言，默认是禁用。  
 > 断言可以根据某个类或某个包单独设置 -ea:MyClass -da:com.your 类MyClass启用断言 包 com.your 禁用断言。
+
+### <a name="b7">泛型</a>
+#### <a name="b7.1">泛型类</a>
+
+* 泛型类的定义：一个泛型类就是有一个或多个类型变量的类。  
+```java
+public class Pair<T> {
+
+    private T first;
+    private T second;
+
+    public T getFirst(){
+        return this.first;
+    }
+
+    public T getSecond(){
+        return this.second;
+    }
+}
+```  
+> 类型变量使用大写形式且比较短。java库中使用变量 E 表示集合的元素类型，K 和 V 表示表的关键字和值的类型，T（U/S）表示”任意类型“。  
+
+#### <a name="b7.2">泛型方法</a>
+
+* 泛型方法可以定义在普通类中。  
+```java
+public class ArrayAlg {
+
+    public static <T> T getMiddle(T[] arr){
+        return arr[arr.length/2];
+    }
+}
+```  
+
+#### <a name="b7.3">类型变量的限定</a>
+
+* 类型变量限定  
+```java
+public static <T extends Comparable> T min(T[] arr) {
+    // 业务逻辑
+}
+```  
+> 该方法只能被实现了 Comparable 接口的类的数组调用。  
+
+* 一个类型变量或通配符可以有多个限定  
+> T extends Comparable & Serializable ；限定类型用 & 分隔，而逗号(,)用来分隔类型变量。  
+
+#### <a name="b7.4">类型类型和虚拟机</a>
+
+* 虚拟机没有泛型类型对象-所有对象都是普通类型。 
+> 任何时候定义一个泛型类型，都自动提供一个原始类型。原始类型的名字就是删除类型参数后的泛型类型名。擦除类型变量，并替换为限定类型(无限定类型使用Object)。
+
+* 如果一个泛型类有类型变量有多个限定类型，泛型擦除时就使用第一个限定类型变量来替换原始类型，如果没有给定限定就使用Object替换原始类型。  
+* 当调用泛型方法时，如果擦除返回类型，编译器插入强制类型转换。
+
+#### <a name="b7.5">通配符类型</a>
+
+* Pair<? extends Employee> 泛型 Pair 类型，它的类型参数是 Employee 的子类。
+* 通配符的超类型限定 Pair<? supper Manager> 泛型 Pair 类型，它的类型参数是 Manager 的超类。
+* 笑哭
+```java
+public static <T extends Comparable<? supper T>> T min(T[] arr) {
+    // 业务逻辑
+}
+``` 
+
+### <a name="b9">多线程</a>
+#### <a name="b9.1">中断线程</a>
+
+* 当对一个线程调用 interrupt() 方法时，线程的中断状态将被置位(置为 true)。每个线程都应该不时的检查这个标志位，以判断线程是否被中断。  
+```java
+while(!Thread.currentThread().isInterrupted() && isMoreWorkTodo){
+    // do more work
+}
+```
+* 但是如果线程被阻塞，就无法检查中断状态（这是产生 InterruptedException 的地方）。当在一个被阻塞的线程（调用 sleep()或者 wait()）上调用 interrupt() 方法时，阻塞调用将会被 InterruptedException 异常中断。
+
+* Thread 类的实例方法 interrupt()、isInterrupted()和静态方法 interrupted() 区别  
+    * 实例方法 void interrupt()：向线程发送中断请求，线程的中断状态被设置为 true。如果目前该线程被一个sleep()/wait()方法阻塞，则抛出 InterruptedException 异常。
+    * 实例方法 boolean isInterrupted()：检查当前线程是否被中断，不会改变中断状态。
+    * 静态方法 static boolean interrupted()：检查当前线程是否被中断，会将当前线程的中断状态置为 false。
+* 捕获到 InterruptedException 时不要直接丢弃，应该让调用者知道这一状态
+    * catch 语句块中 调用 Thread.currentThread().interrupt() 把线程的中断状态置为 true。
+    * 方法声明抛出 InterruptedException 异常。
+
+#### <a name="b9.2">线程6状态</a>
+* 线程6状态：新生、可运行、被阻塞、等待、计时等待、终止。
+    * 新生：new Thread(r) 时线程处于的状态。
+    * 可运行：调用 start() 方法时线程处于的状态。（可能正在运行、也可能还没运行，取决于系统cpu调度）
+    * 被阻塞：运行中的线程由于一些资源(IOZ阻塞\锁等待)而进入阻塞状态，线程暂时不活动，不运行任何代码消耗极少资源。
+    * 等待/计时等待：当线程等待另一个线程通知调度器的一个条件时进入的状态。Object.wait(time) Thread.join()  Lock.tryLock() Condition.await()。
+    * 终止：
+        * run() 方法正常退出而自然死亡。
+        * 因为一个没有捕获的异常终止了 run() 方法而意外死亡。
+* Thread 常见方法
+    * void join()：等待指定的线程终止。
+    * void join(long millis)：等待指定的线程终止或经过指定的毫秒数。
+    * void yield()：导致当前执行线程处于让步状态。如果有其他可运行的线程具有至少与该线程具有同级别的优先级，那么这些线程将会被调度。
+    * Thread.State getState()：获取线程状态：NEW RUNNABLE BLOCKED WAITING TIMED_WAITIND TERMINATED
+    * void stop()：停止该线程，方法已经过时。
+        > 因为天生不安全，该方法终止所有为结束的方法，当线程终止时，立即释放所有被它锁住的所有对象锁，会导致对象处于不一致状态。当线程要终止另一个线程时，不知道什么时候调用 stop 方法。
+
+    * void suspend()：暂停该线程的执行，方法已经过时。
+        > 因为会经常导致死锁。不会破坏对象状态，但是用 suspend 挂起一个持有一个锁的线程，那么该锁在线程恢复前是不可用的，如果调用 suspend 的线程实体获得同一个锁，程序将会死锁。
+
+    * void resume()：恢复线程，仅在调用 suspend() 后调用，方法已经过时。
+        > 因为  
+
+
+#### <a name="b9.3">线程属性</a>
+* 线程优先级、守护线程、线程组、处理未捕获异常的处理器。
+    * 线程优先级：一个线程继承父线程的优先级，优先级范围[1,10]，默认为 NORM_PRIORITY=5。
+        > 线程的优先级高度依赖于操作系统。当虚拟机依赖宿主机平台的线程实现机制时，java线程优先级映射到宿主机平台的优先级上。Windows有7个优先级。在sun为Linux提供的java虚拟机，线程优先级被忽略-所有线程具有相同的优先级。(不要将程序构建为功能的正确性依赖于优先级)  
+    * 守护线程：setDeamon(true) 将线程设置为守护线程-为其他线程服务。当只有守护线程时虚拟机就退出了。
+        > 守护线程不要去访问固有资源(文件、数据库)，因为守护线程会随时被中断。  
+    
+    * 未捕获异常处理器：线程的 run() 不能抛出任何被检测的异常，但是不被检测的异常会导致线程终止。线程在死亡前，异常被传递到一个未捕获异常处理器。
+        > 未捕获异常处理器 必须属于 Thread.UncaughtExceptionHandler 接口的子类。  
+        ```java
+        void uncaughtException(Thread t, Throwable e)
+        ```
+        jdk5.0 后可以使用 setUncaughtExceptionHandler(UncaughtExceptionHandler handler) 方法为任何线程设置未捕获异常处理器。或者使用 Thread.setDefaultUncaughtExceptionHandler(UncaughtExceptionHandler handler) 为所有的线程设置未捕获异常处理器。  
+        但是，如果不为线程设置未捕获异常处理器，则默认为该线程的 ThreadGroup 对象。     
+        * ThreadGroup 实现了 Thread.UncaughtExceptionHandler 接口，它的 uncaughtException 方法做如下操作：
+            1. 如果该线程组有父级线程组，则调用父级线程组的 uncaughtException 方法。
+            2. 否则 Thread.getDefaultUncaughtExceptionHandler 返回一个非空的处理器，则调用该处理器的 uncaughtException 方法。
+            3. 否则 如果 Throwable 是 ThreadDeath 的一个实例，则什么都不做。
+            4. 否则 线程的名字以及 Throwable 的栈踪迹被输出到 System.err 上。
+    
+#### <a name="b9.4">线程同步</a>
+* synchronized：
+* volatile：声明为 volatile 的域，编译器和虚拟机就知道该域可能被其他线程并发更新。
+    * volatile 变量不能保证原子性。
+    * 以下3个条件可用保证域的并发访问是安全的：
+        1. 域是 final，并且在构造器调用完成后才被访问。
+        2. 对域的访问有公有锁进行同步。
+        3. 域是volatile的。
+    * volatile保证获取一个volatile变量值是直接从主内存获取，修改一个volatile变量时，立刻写回主内存。
+    * volatile 可用防止指令重排序。
+* Lock：常用方法
+    1. void lock()：获取锁，获取不到则阻塞。
+    2. void unLock()：释放锁。
+    3. boolean tryLock()：尝试获取锁而不发生阻塞，如果成功返回 true。会抢夺可用锁，及时该锁有公平加锁策略。
+    4. boolean tryLock(long time TimeUnit unit)：尝试获取锁，阻塞时间不会超过给定的值，如果成功返回 true。
+    5. void lockInterruptibly()：获取锁，不确定地发生阻塞，如果线程被中断，则抛出 InterruptedException 异常。
+
+
+* ReenTrantLock：
+* ReenTrantReadWriteLock：可重入读写锁。
+    * Lock readLock()：得到一个可以被多个读操作共享的读锁，但会排斥所有的写操作。
+    * Lock writeLock()：得到一个写锁，排斥所有其他的读操作和写操作。
+* Condition：
+    * void await()：将该线程放到条件的等待集中。当前线程被阻塞，并放弃了锁。直到其他线程调用了同一个条件的signal或者signalAll方法时，该线程可能有机会重新激活，激活后将重新试图获取锁，获得锁的后将重被阻塞的地方继续执行代码。  
+    > 当一个线程调用 await 方法后，它没办法重新激活自己，如果没有其他线程来激活等待的线程，它将永远不会再运行，产生死锁。  
+
+    ```java
+    while(!(isCanProceed)) {
+        condition.await();
+    }
+    ```
+    * boolean await(long time, TimeUnit unit)：进入条件的等待集中。当前线程被阻塞，并放弃了锁。直到其他线程调用了同一个条件的signal或者signalAll方法时，该线程可能有机会重新激活，激活后将重新试图获取锁，获得锁的后将重被阻塞的地方继续执行代码。 等待超时返回 false。
+    * void awaitUninterruptedException()：进入等待集，直到线程被从等待集移除才能解除阻塞。如果线程被中断，不会抛出 InterruptedException 异常。
+    * void signalAll()：解除该等待集中的所有线程的阻塞状态。调用该方法不会立即激活一个线程，仅仅解除等待线程的阻塞状态，以便这些线程可以在当前线程退出同步方法之后，通过竞争实现对同步资源的访问。
+    * void signal()：从该条件的等待集中随机选择一个线程解除其阻塞状态。比 signalAll() 更有效，但是也更加危险：当随机选择的线程发现仍不能运行自己时，其再次被阻塞。如果没有其他线程再次调用 signal，那么系统就死锁了。 
+    
+* 内个对象都有一个内部锁
+    * 内部锁和条件的局限性
+        1. 不能中断一个正式试图获得锁的线程。
+        2. 试图获得锁时不能设定超时。
+        3. 每个锁只有一个单一的条件，可能是不够的。
+* Lock/Condition synchronized 使用的建议
+    1. 最后既不要使用 Lock/Condition 也不要使用 synchronized 关键字。大多数情况可以使用 java.util.concurrent 包中的一种机制来满足需求。
+    2. 如果 synchronized 关键字满足需求，优先使用：代码少、减少出错几率。
+    3. 如果特别需要 Lock/Condition 结构提供的特性，才使用 Lock/Condition 。
+* 监视器具备的特性：
+    1. 监视器是只包含私有域的类。
+    2. 每个监视器类有一个相关的锁。
+    3. 使用该锁对所有方法进行加锁。即客户端调用obj.method() ，那么obj对象的锁在调用方法前自动获得，并且在退出方法后自动释放。
+    4. 该锁可以有任意多个相关条件。  
+> java以不是很精确的方式才有监视器的概念，java中每个对象都有一个内部锁和一个内部条件，当一个方法使用 synchronized 声明，则其表现就像一个监视器。通过 wait/notifyAll/notify来访问条件变量。
+* java对象的3个方面不同于监视器，使得线程安全性下降： 
+    1. 域不要求必须是 private。
+    2. 方法不要求必须是 synchronized。
+    3. 内部锁对客户是可用的。
+
+#### <a name="b9.5">阻塞队列</a>
+* ArrayBlockingQueue：有界阻塞队列，循环数组实现。
+* LinkedBlockingQueue：无界阻塞队列，链表实现。
+* LinkedBlockingDeque：无界阻塞双端队列，链表实现。
+* DelayQueue：无界阻塞时间有限的阻塞队列，只有那些延迟超过了指定时间的元素才可以从队列中移除。
+* PriorityBlockingDeque：无界阻塞优先队列，堆实现。
+* ConcurrentHashMap：
+* ConcurrentSkipListMap：
+* ConcurrentSkipListSet：
+* ConcurrentLinkedQueue：
+* CopyOnWriteArrayList：
+* CopyOnWriteArraySet：
+> 任何集合通过使用同步包装器(synchronization wrapper)变成线程安全的。  
+> Collections.synchronizedList() Collections.synchronizedSet() Collections.synchronizedMap() Collections.synchronizedSortedSet() Collections.synchronizedSortedMap() 
+
+
+
+
+
+
+
+
+

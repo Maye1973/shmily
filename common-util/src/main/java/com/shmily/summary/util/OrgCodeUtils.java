@@ -1,6 +1,6 @@
 package com.shmily.summary.util;
 
-import com.shmily.summary.exception.BaseBizException;
+import com.shmily.summary.exception.BaseBizRuntimeException;
 
 import java.util.Objects;
 
@@ -168,7 +168,7 @@ public class OrgCodeUtils {
 
     // 私有构造方法 不让构造该对象
     private OrgCodeUtils(){
-        throw new BaseBizException(String.join("", "not allow instance ", this.getClass().getName()));
+        throw new BaseBizRuntimeException(String.join("", "not allow instance ", this.getClass().getName()));
     }
 
 

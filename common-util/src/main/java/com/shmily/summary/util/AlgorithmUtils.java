@@ -1,6 +1,6 @@
 package com.shmily.summary.util;
 
-import com.shmily.summary.exception.BaseBizException;
+import com.shmily.summary.exception.BaseBizRuntimeException;
 import com.shmily.summary.vo.MaxMinVO;
 
 import java.util.List;
@@ -84,6 +84,6 @@ public class AlgorithmUtils {
     }
 
     private AlgorithmUtils(){
-        throw new BaseBizException(String.join("", "not allow instance ", this.getClass().getName()));
+        throw new BaseBizRuntimeException(String.join("", "not allow instance ", this.getClass().getName()));
     }
 }

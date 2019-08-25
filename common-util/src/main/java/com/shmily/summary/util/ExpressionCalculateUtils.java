@@ -2,7 +2,7 @@ package com.shmily.summary.util;
 
 import com.google.common.base.Preconditions;
 import com.shmily.summary.enumz.OperatorEnum;
-import com.shmily.summary.exception.BaseBizException;
+import com.shmily.summary.exception.BaseBizRuntimeException;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.Arrays;
@@ -208,15 +208,15 @@ public class ExpressionCalculateUtils {
         }
         // 栈顶操作符 ) 不会存在
         if (OperatorEnum.RIGHT_BRACKETS.getValue().equals(stackTopOperator)) {
-            throw new BaseBizException("expression invalid");
+            throw new BaseBizRuntimeException("expression invalid");
         }
 
-        throw new BaseBizException(String.join("", "stackTopOperator[ ", stackTopOperator, "] invalid"));
+        throw new BaseBizRuntimeException(String.join("", "stackTopOperator[ ", stackTopOperator, "] invalid"));
     }
 
 
     private ExpressionCalculateUtils(){
-        throw new BaseBizException(String.join("", "not allow instance ", this.getClass().getName()));
+        throw new BaseBizRuntimeException(String.join("", "not allow instance ", this.getClass().getName()));
     }
 
     public static void main(String[] args) {

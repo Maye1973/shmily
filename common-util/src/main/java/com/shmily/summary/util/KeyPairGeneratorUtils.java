@@ -2,17 +2,13 @@ package com.shmily.summary.util;
 
 import com.google.common.base.Preconditions;
 import com.shmily.summary.enumz.CharsetEnum;
-import com.shmily.summary.exception.BaseBizException;
+import com.shmily.summary.exception.BaseBizRuntimeException;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import java.io.*;
 import java.nio.charset.Charset;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.nio.file.StandardOpenOption;
 import java.security.*;
 
 /**
@@ -41,7 +37,7 @@ public class KeyPairGeneratorUtils {
         try {
             keyPairGenerator = KeyPairGenerator.getInstance(keyAlgorithm);
         } catch (NoSuchAlgorithmException e) {
-            throw new BaseBizException(String.join("", "no such algorithm[", keyAlgorithm, "]"), e);
+            throw new BaseBizRuntimeException(String.join("", "no such algorithm[", keyAlgorithm, "]"), e);
         }
 
         keyPairGenerator.initialize(KEY_SIZE, new SecureRandom());
@@ -75,13 +71,13 @@ public class KeyPairGeneratorUtils {
             IOUtils.write(Base64.encodeBase64String(key), bufferedOutputStream, Charset.forName(CharsetEnum.UTF8.getValue()));
             bufferedOutputStream.flush();
         } catch (FileNotFoundException e) {
-            throw new BaseBizException(String.join("", "no such file[", path, "]"), e);
+            throw new BaseBizRuntimeException(String.join("", "no such file[", path, "]"), e);
         } catch (IOException e) {
-            throw new BaseBizException(e.getMessage(), e);
+            throw new BaseBizRuntimeException(e.getMessage(), e);
         }
     }
 
     private KeyPairGeneratorUtils(){
-        throw new BaseBizException(String.join("", "not allow instance ", this.getClass().getName()));
+        throw new BaseBizRuntimeException(String.join("", "not allow instance ", this.getClass().getName()));
     }
 }

@@ -1,7 +1,7 @@
 package com.shmily.summary.util;
 
 import com.google.common.hash.Hashing;
-import com.shmily.summary.exception.BaseBizException;
+import com.shmily.summary.exception.BaseBizRuntimeException;
 
 /**
  * MD5工具类
@@ -16,6 +16,6 @@ public class MD5Utils {
     }
 
     private MD5Utils(){
-        throw new BaseBizException(String.join("", "not allow instance ", this.getClass().getName()));
+        throw new BaseBizRuntimeException(String.join("", "not allow instance ", this.getClass().getName()));
     }
 }

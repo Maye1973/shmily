@@ -3,7 +3,7 @@ package com.shmily.summary.util;
 import com.google.common.base.Preconditions;
 import com.shmily.summary.enumz.CharsetEnum;
 import com.shmily.summary.enumz.MessageDigestAlgorithmEnum;
-import com.shmily.summary.exception.BaseBizException;
+import com.shmily.summary.exception.BaseBizRuntimeException;
 import org.apache.commons.lang3.StringUtils;
 import java.io.IOException;
 import java.io.InputStream;
@@ -166,7 +166,7 @@ public class MessageDigestUtils {
             return MessageDigest.getInstance(algorithm);
         }
         catch (NoSuchAlgorithmException ex) {
-            throw new BaseBizException(String.join("", "no such algorithm[", algorithm, "]"), ex);
+            throw new BaseBizRuntimeException(String.join("", "no such algorithm[", algorithm, "]"), ex);
 
         }
     }
@@ -175,7 +175,7 @@ public class MessageDigestUtils {
         try {
             return text.getBytes(charsetEnum.getValue());
         } catch (UnsupportedEncodingException e) {
-            throw new BaseBizException(String.join("", "un support charset[", charsetEnum.getValue(), "]"), e);
+            throw new BaseBizRuntimeException(String.join("", "un support charset[", charsetEnum.getValue(), "]"), e);
         }
     }
 
@@ -190,6 +190,6 @@ public class MessageDigestUtils {
     }
 
     private MessageDigestUtils(){
-        throw new BaseBizException(String.join("", "not allow instance ", this.getClass().getName()));
+        throw new BaseBizRuntimeException(String.join("", "not allow instance ", this.getClass().getName()));
     }
 }

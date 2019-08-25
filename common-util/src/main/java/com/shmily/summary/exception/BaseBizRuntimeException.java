@@ -1,30 +1,30 @@
 package com.shmily.summary.exception;
 
 import com.shmily.summary.errorcode.ErrorCode;
+import lombok.Data;
 
 import java.util.Objects;
 
 /**
- * 系统业务未检异常父类
- * create by kevin.ma on 2019/8/24 下午7:54
+ * 系统业务运行时异常父类
+ * create by kevin.ma on 2019/8/6 下午10:38
  **/
-public class BaseBizException extends Exception implements BaseException {
+public class BaseBizRuntimeException extends RuntimeException implements BaseException {
 
     private String errorCode;
     private String errorDesc;
 
-
-    public BaseBizException() {
+    public BaseBizRuntimeException() {
         super();
     }
 
-    public BaseBizException(String errorCode, String errorDesc) {
+    public BaseBizRuntimeException(String errorCode, String errorDesc) {
         super(errorDesc);
         this.errorCode = errorCode;
         this.errorDesc = errorDesc;
     }
 
-    public BaseBizException(ErrorCode errorCode) {
+    public BaseBizRuntimeException(ErrorCode errorCode) {
         super();
         if (!Objects.isNull(errorCode)) {
             this.errorCode = errorCode.getErrorCode();
@@ -33,7 +33,7 @@ public class BaseBizException extends Exception implements BaseException {
 
     }
 
-    public BaseBizException(Throwable cause, ErrorCode errorCode) {
+    public BaseBizRuntimeException(Throwable cause, ErrorCode errorCode) {
         super(cause);
         if (!Objects.isNull(errorCode)) {
             this.errorCode = errorCode.getErrorCode();
@@ -42,24 +42,24 @@ public class BaseBizException extends Exception implements BaseException {
 
     }
 
-    public BaseBizException(Throwable cause, String errorCode, String errorDesc) {
+    public BaseBizRuntimeException(Throwable cause, String errorCode, String errorDesc) {
         super(errorDesc, cause);
         this.errorCode = errorCode;
         this.errorDesc = errorDesc;
     }
 
-    public BaseBizException(Throwable cause, boolean enableSuppression, boolean writableStackTrace, String errorCode, String errorDesc) {
+    public BaseBizRuntimeException(Throwable cause, boolean enableSuppression, boolean writableStackTrace, String errorCode, String errorDesc) {
         super(errorDesc, cause, enableSuppression, writableStackTrace);
         this.errorCode = errorCode;
         this.errorDesc = errorDesc;
     }
 
-    public BaseBizException(String errorDesc, Throwable cause) {
+    public BaseBizRuntimeException(String errorDesc, Throwable cause) {
         super(errorDesc, cause);
         this.errorDesc = errorDesc;
     }
 
-    public BaseBizException(String errorDesc) {
+    public BaseBizRuntimeException(String errorDesc) {
         super(errorDesc);
         this.errorDesc = errorDesc;
     }

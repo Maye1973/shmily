@@ -2,7 +2,7 @@ package com.shmily.summary.util;
 
 import com.google.common.base.Preconditions;
 import com.shmily.summary.enumz.CharsetEnum;
-import com.shmily.summary.exception.BaseBizException;
+import com.shmily.summary.exception.BaseBizRuntimeException;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -68,7 +68,7 @@ public class RSAUtils {
         try {
             plainTextByte = plainText.getBytes(CharsetEnum.UTF8.getValue());
         } catch (UnsupportedEncodingException e) {
-            throw new BaseBizException(String.join("", "unSupport encoding[", charsetEnum.getValue(), "]"), e);
+            throw new BaseBizRuntimeException(String.join("", "unSupport encoding[", charsetEnum.getValue(), "]"), e);
         }
         String publicKeyStr = getKey(publicKeyPath);
         PublicKey publicKey = transferPublicKeyFromString(publicKeyStr);
@@ -110,7 +110,7 @@ public class RSAUtils {
         try {
             plainTextByte = plainText.getBytes(CharsetEnum.UTF8.getValue());
         } catch (UnsupportedEncodingException e) {
-            throw new BaseBizException(String.join("", "unSupport encoding[", charsetEnum.getValue(), "]"), e);
+            throw new BaseBizRuntimeException(String.join("", "unSupport encoding[", charsetEnum.getValue(), "]"), e);
         }
         PublicKey publicKey = transferPublicKeyFromString(publicKeyStr);
         return Base64.encodeBase64String(doEncodeDecode(Cipher.ENCRYPT_MODE,
@@ -153,7 +153,7 @@ public class RSAUtils {
         try {
             return new String(bytesAfterDecode, CharsetEnum.UTF8.getValue());
         } catch (UnsupportedEncodingException e) {
-            throw new BaseBizException(String.join("", "unSupport encoding[", charsetEnum.getValue(), "]"), e);
+            throw new BaseBizRuntimeException(String.join("", "unSupport encoding[", charsetEnum.getValue(), "]"), e);
         }
     }
 
@@ -168,19 +168,19 @@ public class RSAUtils {
             }
             return cipher.doFinal(txt);
         } catch (NoSuchAlgorithmException e) {
-            throw new BaseBizException(String.join("", "no such algorithm[", RSA, "]"), e);
+            throw new BaseBizRuntimeException(String.join("", "no such algorithm[", RSA, "]"), e);
 
         } catch (NoSuchPaddingException e) {
-            throw new BaseBizException(String.join("", "no such padding"), e);
+            throw new BaseBizRuntimeException(String.join("", "no such padding"), e);
 
         } catch (InvalidKeyException e) {
-            throw new BaseBizException(String.join("", "invalid key"), e);
+            throw new BaseBizRuntimeException(String.join("", "invalid key"), e);
 
         } catch (BadPaddingException e) {
-            throw new BaseBizException(String.join("", "bad padding"), e);
+            throw new BaseBizRuntimeException(String.join("", "bad padding"), e);
 
         } catch (IllegalBlockSizeException e) {
-            throw new BaseBizException(String.join("", "invalid block size"), e);
+            throw new BaseBizRuntimeException(String.join("", "invalid block size"), e);
         }
     }
 
@@ -206,7 +206,7 @@ public class RSAUtils {
 
             return out.toByteArray();
         } catch (IOException e) {
-            throw new BaseBizException(e.getMessage(), e);
+            throw new BaseBizRuntimeException(e.getMessage(), e);
         }
     }
 
@@ -219,7 +219,7 @@ public class RSAUtils {
             keyStr = loadKeyByPath(keyPath);
 
             if (StringUtils.isEmpty(keyStr)) {
-                throw new BaseBizException(String.join("", "key file[", keyPath, "] invalid"));
+                throw new BaseBizRuntimeException(String.join("", "key file[", keyPath, "] invalid"));
             }
             // 存入缓存
             KEY_MAP.put(mapKey, keyStr);
@@ -235,9 +235,9 @@ public class RSAUtils {
             X509EncodedKeySpec x509EncodedKeySpec = new X509EncodedKeySpec(publicKeyBytes);
             return keyFactory.generatePublic(x509EncodedKeySpec);
         } catch (NoSuchAlgorithmException e) {
-            throw new BaseBizException(String.join("", "no such algorithm[", RSA, "]"), e);
+            throw new BaseBizRuntimeException(String.join("", "no such algorithm[", RSA, "]"), e);
         } catch (InvalidKeySpecException e) {
-            throw new BaseBizException(String.join("", "invalid public keySpec"), e);
+            throw new BaseBizRuntimeException(String.join("", "invalid public keySpec"), e);
         }
     }
 
@@ -248,9 +248,9 @@ public class RSAUtils {
             PKCS8EncodedKeySpec pkcs8EncodedKeySpec = new PKCS8EncodedKeySpec(privateKeyBytes);
             return keyFactory.generatePrivate(pkcs8EncodedKeySpec);
         } catch (NoSuchAlgorithmException e) {
-            throw new BaseBizException(String.join("", "no such algorithm[", RSA, "]"), e);
+            throw new BaseBizRuntimeException(String.join("", "no such algorithm[", RSA, "]"), e);
         } catch (InvalidKeySpecException e) {
-            throw new BaseBizException(String.join("", "invalid private keySpec"), e);
+            throw new BaseBizRuntimeException(String.join("", "invalid private keySpec"), e);
         }
     }
 
@@ -261,12 +261,12 @@ public class RSAUtils {
             list.forEach(a -> sb.append(a));
             return sb.toString();
         } catch (IOException e) {
-            throw new BaseBizException(String.join("", "load key file[", path, "] error:", e.getMessage()), e);
+            throw new BaseBizRuntimeException(String.join("", "load key file[", path, "] error:", e.getMessage()), e);
         }
     }
 
     private RSAUtils(){
-        throw new BaseBizException(String.join("", "not allow instance ", this.getClass().getName()));
+        throw new BaseBizRuntimeException(String.join("", "not allow instance ", this.getClass().getName()));
     }
 
 
