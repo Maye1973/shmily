@@ -481,6 +481,50 @@ while(!Thread.currentThread().isInterrupted() && isMoreWorkTodo){
     4. boolean isCancelled()：计算是否已经取消
     5. boolean isDone()：计算是否已经完成。
 
+#### <a name="b9.7">执行器 Executor </a>
+* ThreadPoolExecutor(线程池核心类) 执行顺序：
+    1. 任务到来时，如果当前的工作线程小于 corePoolSize，则创建新线程执行任务。
+    2. 如果当前的工作线程大于 corePoolSize，则把 任务放入队列，等待执行。
+    3. 如果此时队列满了，工作线程小于 maximumPoolSize，则创建新线程执行任务。
+    4. 如果此时 工作线程已经大于 maximumPoolSize，则使用线程拒绝策略执行任务。  
+    > 空闲线程回收，当线程池中线程数大于 corePoolSize ，线程空闲时间大于等于keepAliveTime 时，线程会被回收（线程池中存活线程数最小为 corePoolSize 不管空闲与否）。  
+* 执行器 Executor 有许多静态工厂方法来构建线程池：
+    * Executors.newCachedThreadPool()：当任务到来时，必要时不断创建线程很执行任务，直到线程总数 到达 Integer.MAX_VALUE，后续会把任务放到 SynchronousQueue 队列等待线程空闲后再执行任务。空闲线程最大存活60s。  
+    > 底层是 new ThreadPoolExecutor(0, Integer.MAX_VALUE,
+                                      60L, TimeUnit.SECONDS,
+                                      new SynchronousQueue<Runnable>())     
+    > 高并发任务不适合使用该方法构造线程池，假设一个任务执行1s，1s有1000个并发，则会创建1000个线程。线程上限无法控制。使用是需要考虑线程数暴增问题。
+
+    * Executors.newFixedThreadPool(int nThreads)：创建固定大小的线程，当任务到来无法处理时，使用无界阻塞队列保存任务，等待线程空闲后处理。  
+    > 底层是 new ThreadPoolExecutor(nThreads, nThreads,
+                                      0L, TimeUnit.MILLISECONDS,
+                                      new LinkedBlockingQueue<Runnable>());    
+    > 高并高发耗时的任务需要注意队列暴增，有可能导致OOM。
+
+    * Executors.newSingleThreadExecutor()：退化的 Executors.newFixedThreadPool(int nThreads)版本，此时 nThreads = 1。
+    > new ThreadPoolExecutor(1, 1,
+                                      0L, TimeUnit.MILLISECONDS,
+                                      new LinkedBlockingQueue<Runnable>());     
+    > 高并高发耗时的任务需要注意队列暴增，有可能导致OOM。
+
+    * Executors.newScheduledThreadPool(int nThreads)：创建固定大小的线程，定时执行，无界延迟阻塞队列。
+    > 底层是 new ScheduledThreadPoolExecutor(corePoolSize) ->   
+    > super(corePoolSize, Integer.MAX_VALUE, 0, NANOSECONDS,
+              new DelayedWorkQueue()); 应为 ScheduledThreadPoolExecutor 的父类是 ThreadPoolExecutor 所以相当于  ->   
+    > new ThreadPoolExecutor(corePoolSize, Integer.MAX_VALUE, 0, NANOSECONDS, new DelayedWorkQueue(),
+             Executors.defaultThreadFactory(), defaultHandler);    
+    > 高并高发耗时的任务需要注意队列暴增，有可能导致OOM。
+
+* 关闭线程池的两个方法：
+    1. ExecutorService类的shutdown()：被关闭的执行器不再接受任务，当所有任务完成，线程池中的线程死亡。
+    2. ExecutorService类的shutdownNow()：该执行器取消未开始的任务，并试图中断正在执行的线程，执行中任务完成后，线程池中的线程死亡。
+
+#### <a name="b9.8">同步器 </a>
+* CyclicBarrier：
+* CountDownLatch：
+* Exchanger：
+* Semaphore：
+* SynchronousQueue：
 
 
 
