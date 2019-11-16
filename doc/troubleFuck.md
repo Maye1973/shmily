@@ -6,6 +6,8 @@
      * <a href="#a1">RSA加密报：algid parse error, not a sequence</a>
   * <a href="#B">HTTP问题</a>
     * <a href="#b1">http请求报：NoHttpResponseException</a>
+  * <a href="#C">REDIS问题</a>
+    * <a href="#c1">redis客户端报错：ERR Client sent AUTH, but no password is set</a>
 
 ## <a name="A">加解密问题</a>
 #### <a name="a.1">RSA加密报：algid parse error, not a sequence</a>
@@ -63,3 +65,12 @@
 > 设置 http 连接池 最大连接数时要考虑部署机子的数量。当 maxTotal = 200 ，部署5台机子时，和服务端建立的连接数实际是 200*5=1000 ，连接数大于服务端的最大数量时也会报”NoHttpResponseException异常。  
 
 > 参考：https://blog.csdn.net/siantbaicn/article/details/80854528
+
+## <a name="C">REDIS问题</a>
+#### <a name="c.1">redis客户端报错：ERR Client sent AUTH, but no password is set</a>
+* 现象：lettuce redis客户端操作redis命令报错：io.lettuce.core.RedisCommandExecutionException: ERR Client sent AUTH, but no password is set  
+* 原因：spring.redis.password=''，实际redis服务端可以免密登录。  
+* 解决办法：    
+    1. 确认 redis 服务器是可以免密登录的(redis-cli验证)  
+    2. 设置 spring.redis.password=  
+> 参考：
