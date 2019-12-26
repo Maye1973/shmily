@@ -1,3 +1,8 @@
+
+jar{
+    enabled = true
+}
+
 dependencies {
 
     // apache
@@ -9,13 +14,13 @@ dependencies {
     // guava
     compile("com.google.guava:guava:${GuavaVersion}")
 
-
-
     // json
     compile("com.alibaba:fastjson:${FastjsonVersion}")
     // lombok
-    compileOnly("org.projectlombok:lombok:${LombokVersion}")
-    annotationProcessor("org.projectlombok:lombok:${LombokVersion}")
+    annotationProcessor "org.projectlombok:lombok:${LombokVersion}"
+    compileOnly "org.projectlombok:lombok:${LombokVersion}"
+    testAnnotationProcessor "org.projectlombok:lombok:${LombokVersion}"
+    testCompileOnly "org.projectlombok:lombok:${LombokVersion}"
 
     // tool
     compile("org.hibernate:hibernate-validator:${HibernateValidatorVersion}")
